@@ -35,8 +35,36 @@ def BFS(screen, grid):
         py.time.delay(10)
         py.display.flip()
 
+def DFS(screen, grid):
+    rows, cols = grid.shape
+    start = (0, 0)
+    end = (rows - 1, cols - 1)
+    stack = [start]
+    visited = set(start)
+    color = [1, 0, 0]
+    while stack:
+        row, col = stack.pop()
+        if (row, col) == end:
+            break
+        found_end = False
+        for r, c in [(row-1, col), (row+1, col), (row, col-1), (row, col+1)][::-1]:
+            if 0 <= r < rows and 0 <= c < cols and grid[r][c] == 0 and (r, c) not in visited:
+                stack.append((r, c))
+                visited.add((r, c))
+                if (r,c) != (0, 0) and (r,c) != (rows - 1,cols - 1):
+                    color2 = (color[0], color[1], color[2])
+                    py.draw.rect(screen, color2, py.Rect(c*tile_width, r*tile_width, tile_width, tile_width))
+                    if color[0] < 254:
+                        color[0] += 1
+                if (r, c) == end:
+                    found_end = True
+                    break
+        if found_end:
+            break
+        py.time.delay(10)
+        py.display.flip()
 
-
+    
 def setup_screen(screen, grid):
     for i in range(grid.shape[0]):
         grid[i,:] = 0
@@ -55,7 +83,7 @@ def main():
 
     grid = np.zeros((TILE_STEP, TILE_STEP))
    
-   # setup screen
+    # setup screen
     setup_screen(screen, grid)
         
     # buttons
@@ -63,8 +91,12 @@ def main():
     py.draw.rect(screen, (10, 100, 55), py.Rect(WIDTH, tile_height*0, ACTUAL_WIDTH-WIDTH, tile_height))
     screen.blit(font.render('BFS', True, (255,255,255)), start_button)
 
-    clear_button = (WIDTH+10, 10+tile_height)
-    py.draw.rect(screen, (100, 10, 55), py.Rect(WIDTH, tile_height*1, ACTUAL_WIDTH-WIDTH, tile_height))
+    start_button = (WIDTH+10, 10+tile_height)
+    py.draw.rect(screen, (10, 100, 55), py.Rect(WIDTH, tile_height*1, ACTUAL_WIDTH-WIDTH, tile_height))
+    screen.blit(font.render('DFS', True, (255,255,255)), start_button)
+
+    clear_button = (WIDTH+10, 10+tile_height*2)
+    py.draw.rect(screen, (100, 10, 55), py.Rect(WIDTH, tile_height*2, ACTUAL_WIDTH-WIDTH, tile_height))
     screen.blit(font.render('Clear', True, (255,255,255)), clear_button)
 
     py.display.flip()
@@ -81,6 +113,9 @@ def main():
                     BFS(screen, grid)
                     searched = True
                 elif WIDTH < py.mouse.get_pos()[0] < ACTUAL_WIDTH and tile_height*1 <= py.mouse.get_pos()[1] < tile_height*2:
+                    DFS(screen, grid)
+                    searched = True
+                elif WIDTH < py.mouse.get_pos()[0] < ACTUAL_WIDTH and tile_height*2 <= py.mouse.get_pos()[1] < tile_height*3:
                     setup_screen(screen, grid)
                     searched = False
             elif event.type == py.MOUSEBUTTONUP:
