@@ -17,23 +17,66 @@ def BFS(screen, grid):
     start = (0, 0)
     end = (rows - 1, cols - 1)
     queue = [start]
-    visited = set(start)
+    visited = [start]
+    previous = [-1 for i in range(TILE_STEP ** 2)]
     color = [1, 0, 0]
     while queue:
         row, col = queue.pop(0)
         if (row, col) == end:
+            # visited.append((row, col))
+            # previous[row * grid.shape[0] + col] = (row, col)
             break
+        i = 0
         for r, c in [(row-1, col), (row+1, col), (row, col-1), (row, col+1)]:
             if 0 <= r < rows and 0 <= c < cols and grid[r][c] == 0 and (r, c) not in visited:
                 queue.append((r, c))
-                visited.add((r, c))
+                visited.append((r, c))
+                previous[r * grid.shape[0] + c] = i
+
                 if (r,c) != (0, 0) and (r,c) != (rows - 1,cols - 1):
                     color2 = (color[0], color[1], color[2])
                     py.draw.rect(screen, color2, py.Rect(c*tile_width, r*tile_width, tile_width, tile_width))
                     if color[0] < 254:
                         color[0] += 1
+            i += 1
         py.time.delay(10)
         py.display.flip()
+    
+    end_x = grid.shape[0] - 1
+    end_y = grid.shape[1] - 1
+    
+    print(previous)
+    if previous[end_y * grid.shape[0] + end_x - 1] != -1:
+        end_idx = end_y * grid.shape[0] + end_x - 1
+        while end_idx != 0:
+            py.draw.rect(screen, (0, 255, 0), py.Rect((end_idx % grid.shape[0])*tile_width, (end_idx // grid.shape[0])*tile_height, tile_width, tile_width))
+            if previous[end_idx] == 0:      # go up
+                end_idx += (grid.shape[1])
+            if previous[end_idx] == 1:      # go down
+                end_idx -= (grid.shape[1])
+            if previous[end_idx] == 2:      # go left
+                end_idx += 1
+            if previous[end_idx] == 3:      # go right
+                end_idx -= 1
+            
+            py.time.delay(30)
+            py.display.flip()
+    if previous[end_y * grid.shape[0] + end_x - grid.shape[0]] != -1:
+        end_idx = end_y * grid.shape[0] + end_x - grid.shape[0]
+        while end_idx != 0:
+            py.draw.rect(screen, (0, 0, 255), py.Rect((end_idx % grid.shape[0])*tile_width, (end_idx // grid.shape[0])*tile_height, tile_width, tile_width))
+            if previous[end_idx] == 0:      # go up
+                end_idx += (grid.shape[1])
+            if previous[end_idx] == 1:      # go down
+                end_idx -= (grid.shape[1])
+            if previous[end_idx] == 2:      # go left
+                end_idx += 1
+            if previous[end_idx] == 3:      # go right
+                end_idx -= 1
+            
+            py.time.delay(30)
+            py.display.flip()
+
 
 def DFS(screen, grid):
     rows, cols = grid.shape
