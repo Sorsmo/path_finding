@@ -45,11 +45,10 @@ def BFS(screen, grid):
     end_x = grid.shape[0] - 1
     end_y = grid.shape[1] - 1
     
-    print(previous)
     if previous[end_y * grid.shape[0] + end_x - 1] != -1:
         end_idx = end_y * grid.shape[0] + end_x - 1
         while end_idx != 0:
-            py.draw.rect(screen, (0, 255, 0), py.Rect((end_idx % grid.shape[0])*tile_width, (end_idx // grid.shape[0])*tile_height, tile_width, tile_width))
+            py.draw.rect(screen, (0, 0, 255), py.Rect((end_idx % grid.shape[0])*tile_width, (end_idx // grid.shape[0])*tile_height, tile_width, tile_width))
             if previous[end_idx] == 0:      # go up
                 end_idx += (grid.shape[1])
             if previous[end_idx] == 1:      # go down
@@ -61,7 +60,7 @@ def BFS(screen, grid):
             
             py.time.delay(30)
             py.display.flip()
-    if previous[end_y * grid.shape[0] + end_x - grid.shape[0]] != -1:
+    elif previous[end_y * grid.shape[0] + end_x - grid.shape[0]] != -1:
         end_idx = end_y * grid.shape[0] + end_x - grid.shape[0]
         while end_idx != 0:
             py.draw.rect(screen, (0, 0, 255), py.Rect((end_idx % grid.shape[0])*tile_width, (end_idx // grid.shape[0])*tile_height, tile_width, tile_width))
